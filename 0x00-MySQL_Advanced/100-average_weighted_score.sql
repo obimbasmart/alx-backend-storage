@@ -11,7 +11,7 @@ DELIMITER $$
 
 CREATE PROCEDURE ComputeAverageWeightedScoreForUser(IN user_id INT)
 BEGIN
-    DECLARE weighted_avg INT;
+    DECLARE weighted_avg FLOAT;
 
     SELECT SUM(score * weight) / SUM(weight) INTO weighted_avg
     FROM corrections
