@@ -27,8 +27,8 @@ def nginx_stats(db, collection):
                         log['path'] == '/status'
                         ])
 
-    return ('{} logs\nMethods:\n    method GET: {}\n    method POST: {}\n    method '
-            'PUT: {}\n    method PATCH: {}\n    method DELETE: {}\n{} status check'
+    return ('{} logs\n\tMethods:\n\tmethod GET: {}\n\tmethod POST: {}\n\tmethod '
+            'PUT: {}\n\tmethod PATCH: {}\n\tmethod DELETE: {}\n{} status check'
             .format(
                 len(logs),
                 *grouped_logs.values(), status_check
