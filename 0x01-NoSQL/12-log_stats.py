@@ -10,19 +10,25 @@ Display (same as the example):
 
 from pymongo import MongoClient
 
-client = MongoClient()
-server_logs_collection = client.logs.nginx
-logs = [log for log in server_logs_collection.find({})]
 
-methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+def nginx_stats(db, collection):
+    """logs out nginx server logs"""
+    client = MongoClient()
+    server_logs_collection = client[db][collection]
+    logs = [log for log in server_logs_collection.find({})]
 
-grouped_logs = {
-    method: len([log for log in logs if log['method'] == method])
-    for method in methods
-}
+    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
-print('{} logs\nMethods:\n\tmethod GET {}\n\tmethod POST {}\n\tmethod '
-      'PUT {}\n\tmethod PATCH {}\n\tmethod DELETE {}'.format(
-          len(logs),
-          *grouped_logs.values()
-      ))
+    grouped_logs = {
+        method: len([log for log in logs if log['method'] == method])
+        for method in methods
+    }
+
+    return ('{} logs\nMethods:\n\tmethod GET {}\n\tmethod POST {}\n\tmethod '
+            'PUT {}\n\tmethod PATCH {}\n\tmethod DELETE {}'.format(
+                len(logs),
+                *grouped_logs.values()
+            ))
+
+
+print(nginx_stats('logs', 'nginx'))
