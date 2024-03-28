@@ -24,11 +24,18 @@ def nginx_stats(db, collection):
         for method in methods
     }
 
+    status_check = len([log for log in logs
+                        if log['method'] == "GET" and
+                        log['path'] == '/status'
+                        ])
+
     return ('{} logs\nMethods:\n\tmethod GET {}\n\tmethod POST {}\n\tmethod '
-            'PUT {}\n\tmethod PATCH {}\n\tmethod DELETE {}'.format(
+            'PUT {}\n\tmethod PATCH {}\n\tmethod DELETE {}\n{} status check'
+            .format(
                 len(logs),
-                *grouped_logs.values()
+                *grouped_logs.values(), status_check
             ))
 
 
-print(nginx_stats('logs', 'nginx'))
+if __name__ == "__main__":
+    print(nginx_stats('logs', 'nginx'))
