@@ -14,26 +14,18 @@ from pymongo import MongoClient
 def nginx_stats(db, collection):
     """logs out nginx server logs"""
     client = MongoClient()
-    server_logs_collection = client[db][collection]
-    logs = [log for log in server_logs_collection.find({})]
+    nginx_logs = client[db][collection]
     methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
-    grouped_logs = {
-        method: len([log for log in logs if log['method'] == method])
-        for method in methods
-    }
-    status_check = len([log for log in logs
-                        if log['method'] == "GET" and
-                        log['path'] == '/status'
-                        ])
+    print(nginx_logs.count_documents({}), "logs")
+    print("Methods:")
+    for method in methods:
+        count = nginx_logs.count_documents({"method": method})
+        print(f'\tmethod {method}: {count}')
 
-    return ('{} logs\n\tMethods:\n\tmethod GET: {}\n\tmethod POST: {}\n\tmethod '
-            'PUT: {}\n\tmethod PATCH: {}\n\tmethod DELETE: {}\n{} status check'
-            .format(
-                len(logs),
-                *grouped_logs.values(), status_check
-            ))
+    print(nginx_logs.count_documents({"method": 'GET', 'path': '/status'}),
+          'status check')
 
 
 if __name__ == "__main__":
-    print(nginx_stats('logs', 'nginx'))
+    nginx_stats('logs', 'nginx')
