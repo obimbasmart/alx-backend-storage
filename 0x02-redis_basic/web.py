@@ -20,5 +20,5 @@ def get_page(url: str) -> str:
         return cached_result
 
     response = requests.get(url).text
-    r.set(url, response, ex=10)
+    r.setx(url, 10, response)
     return response
