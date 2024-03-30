@@ -25,7 +25,6 @@ def call_history(method: Callable) -> Callable:
     @functools.wraps(method)
     def history_wrapper(self, *args, **kwargs):
         self._redis.rpush(f'{method.__qualname__}:inputs', str(args))
-        print(args)
         output = method(self, *args, **kwargs)
         self._redis.rpush(f'{method.__qualname__}:outputs', output)
         return output
