@@ -8,7 +8,7 @@ from typing import Union, Callable, Any
 import functools
 
 
-def count_calls(method: Callable[[Any, Any], Any]) -> Callable[[Any], Any]:
+def count_calls(method: Callable) -> Callable:
     """decorator - count the number of times a func is called"""
     @functools.wraps(method)
     def count_wrapper(self, *args, **kwargs):
