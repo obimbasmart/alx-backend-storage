@@ -4,21 +4,32 @@
 
 import requests
 import redis
+from typing import Callable
+import functools
 
 
-r = redis.Redis()
+__redis = redis.Redis()
 
 
+def cache_request(method: Callable) -> Callable:
+    """cache decorator: track ntimes func is called
+       and cache result for 10s"""
+    @functools.wraps(method)
+    def cache_wrapper(url):
+        __redis.incr(f'count:{url}')
+        cached_result = __redis.get(f'cached:{url}')
+        if cached_result:
+            return cached_result.decode('utf-8')
+
+        response = method(url)
+        __redis.setex(f'cached:{url}', 10, response)
+        return response
+
+    return cache_wrapper
+
+
+@cache_request
 def get_page(url: str) -> str:
     """obtain html content of a web page
-        track ntimes func is called
-        and cache result for 10s
     """
-    r.incr(f'count:{url}')
-    cached_result = r.get(url)
-    if cached_result:
-        return cached_result
-
-    response = requests.get(url).text
-    r.setx(url, 10, response)
-    return response
+    return requests.get(url).text
