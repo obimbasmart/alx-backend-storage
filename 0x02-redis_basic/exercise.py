@@ -8,7 +8,7 @@ from typing import Union, Callable, Any
 import functools
 
 
-def count_call(method: Callable[[Any, Any], Any]) -> Callable[[Any], Any]:
+def count_calls(method: Callable[[Any, Any], Any]) -> Callable[[Any], Any]:
     """decorator - count the number of times a func is called"""
     @functools.wraps(method)
     def count_wrapper(self, *args, **kwargs):
@@ -26,7 +26,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    @count_call
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """store the input data in Redis"""
         key = str(uuid.uuid1())
